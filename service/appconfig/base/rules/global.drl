@@ -1,0 +1,53 @@
+package fraud
+dialect "mvel"
+
+import org.slf4j.LoggerFactory
+import java.util.Map;
+import java.util.Date;
+import java.util.HashMap;
+import java.lang.Integer;
+import java.lang.Double;
+import org.slf4j.LoggerFactory
+import fraud.api.v1.check.payment.Amount
+import fraud.api.v1.check.payment.Payment
+import fraud.api.v1.check.Transaction
+import fraud.api.v1.check.product.travel.TravelProduct
+import fraud.service.rules.RulesProcessor
+import fraud.db.dao.mongo.CurrencyExchangeDAO
+
+import function org.drools.core.util.StringUtils.isEmpty
+
+
+rule "Price is over 5000"
+no-loop
+when
+     $transaction : Transaction()
+     $product : TravelProduct ( price.usdValue > 500 ) from $transaction.products
+     $attributes : Map () from $transaction.attributes
+then
+     /*modify($attributes) {
+        put("IsPriceOver5000", true)
+     }*/
+     modify($transaction) {
+        getAttributes.put("IsPriceOver5000", true)
+     }
+     //$transaction.attributes.put("IsPriceOver5000", true);
+     LoggerFactory.getLogger(RulesProcessor.class).debug(String.format("Price is over 5000 [%s]", $product.type))
+     System.out.println( "Price is over 5000" + $product)
+end
+
+rule "Print product"
+when
+    $transaction : Transaction ( $products : products )
+then
+    System.out.println( "Transaction ["+ $transaction +"] and and products ["+ $products +"]");
+end
+
+rule "Days until departure"
+when
+    $transaction : Transaction()
+    $product : TravelProduct($millis : (getDateStart().getTime() - new Date().getTime())) from $transaction.products
+then
+    $product.getAttributes().put("DaysUntilDeparture", Math.abs((Double)$millis / 86400000));
+    $product.getAttributes().put("HoursUntilDeparture", Math.abs((Double)$millis / 3600000));
+end

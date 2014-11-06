@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:ignoreUnresolvablePlaceholders="true">
+        <property name="locations">
+            <list>
+                <value>classpath:fraud.client.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sslKeystore" class="common.rest.client.transport.HttpClientSSLKeyStore">
+        <constructor-arg type="java.io.InputStream" value="classpath:/cert/oauthTrustStore.jks"/>
+        <constructor-arg value="5ecret0AUTHPa55word"/>
+        <constructor-arg value="true"/>
+    </bean>
+
+    <bean id="httpTransport" class="common.rest.client.transport.HttpClientTransport">
+        <!--<constructor-arg index="0" ref="sslKeystore"/>-->
+    </bean>
+
+    <bean id="authServiceClient" class="fraud.client.v1.FraudServiceClient">
+        <constructor-arg index="0" value="${fraudServiceClient/endpoint}"/>
+        <constructor-arg index="1" value="${fraudServiceClient/clientId}"/>
+        <constructor-arg index="2" ref="httpTransport"/>
+    </bean>
+
+</beans>

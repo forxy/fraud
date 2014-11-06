@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation='
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd'>
+
+    <bean id="transactionDAO.mongo.perf"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.ITransactionDAO"/>
+
+    <bean id="currencyExchangeDAO.mongo.perf"
+              class="org.easymock.EasyMock"
+              factory-method="createNiceMock"
+              c:toMock="fraud.db.dao.mongo.CurrencyExchangeDAO"/>
+
+    <bean id="velocityConfigDAO.impl.mongo"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.IVelocityConfigDAO"/>
+
+    <bean id="transactionDAO.cassandra"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.ITransactionDAO"/>
+
+    <bean id="derogDAO.impl.cassandra"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.IDerogDAO"/>
+
+    <bean id="velocityDAO.impl.redis"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.redis.IRedisVelocityDAO"/>
+
+    <bean id="velocityDAO.impl.cassandra"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.cassandra.ICassandraVelocityDAO"/>
+
+    <bean id="dbCache"
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.util.DBCache"/>
+
+
+</beans>

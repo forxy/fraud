@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://cxf.apache.org/jaxrs                 http://cxf.apache.org/schemas/jaxrs.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <bean id="service.configuration" class="common.support.Configuration">
+        <constructor-arg>
+            <map>
+                <entry key="#{T(common.web.JSONValidationProvider$Configs).IsObjectValidationEnabled}"
+                       value="true"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="payload.validator" class="net.sf.oval.Validator">
+        <constructor-arg>
+            <list>
+                <bean class="net.sf.oval.configuration.xml.XMLConfigurer">
+                    <constructor-arg type="java.io.InputStream"
+                                     value="classpath:/validation/fraud.validation.xml"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="runtimeExceptionMapper" class="common.exceptions.support.RuntimeExceptionMapper"/>
+
+    <jaxrs:server id="fraudService.rest" address="/rest/v1">
+        <jaxrs:serviceBeans>
+            <ref bean="systemStatusController"/>
+            <ref bean="fraudServiceController"/>
+            <ref bean="derogController"/>
+            <ref bean="velocityController"/>
+            <ref bean="velocityConfigController"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <bean class="common.web.JSONValidationProvider">
+                <property name="configuration" ref="service.configuration"/>
+                <property name="validator" ref="payload.validator"/>
+            </bean>
+            <ref bean="runtimeExceptionMapper"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+
+</beans>

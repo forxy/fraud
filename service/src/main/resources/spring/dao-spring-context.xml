@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:context='http://www.springframework.org/schema/context'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:mongo='http://www.springframework.org/schema/data/mongo'
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/mongo    http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+        http://www.springframework.org/schema/context       http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!-- =========================================================================================
+                                   Redis Data Source
+    ========================================================================================== -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:hostName="localhost" p:port="6379"/>
+
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"
+          p:connectionFactory-ref="jedisConnectionFactory"/>
+
+    <bean id="velocityDAO.impl.redis" class="fraud.db.dao.redis.RedisVelocityDAO" autowire-candidate="false"
+          p:redis-ref="redisTemplate"/>
+
+
+    <!-- =========================================================================================
+                                   Mongo Data Source
+    ========================================================================================== -->
+    <context:annotation-config/>
+    <context:component-scan base-package='fraud.api.v1'/>
+
+    <mongo:mongo id="mongo" host='${mongoTemplate/host}' port='${mongoTemplate/port}'>
+        <mongo:options
+                connections-per-host='${mongoTemplate/connections}'
+                connect-timeout='${mongoTemplate/timeout}'
+                max-wait-time='${mongoTemplate/maxWait}'
+                write-number='${mongoTemplate/writeNumber}'
+                write-timeout='${mongoTemplate/writeTimeout}'
+                write-fsync='${mongoTemplate/writeFSync}'/>
+    </mongo:mongo>
+
+    <mongo:db-factory id="factory" dbname='fraud' mongo-ref='mongo'/>
+
+    <mongo:repositories base-package='fraud.db.dao.mongo'/>
+
+
+    <bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext">
+        <property name="fieldNamingStrategy">
+            <bean class="org.springframework.data.mongodb.core.mapping.SnakeCaseFieldNamingStrategy"/>
+        </property>
+    </bean>
+
+    <bean id="defaultMongoTypeMapper" class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mappingMongoConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg name="mongoDbFactory" ref="factory"/>
+        <constructor-arg name="mappingContext" ref="mappingContext"/>
+        <property name="typeMapper" ref="defaultMongoTypeMapper"/>
+    </bean>
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="factory"/>
+        <constructor-arg name="mongoConverter" ref="mappingMongoConverter"/>
+    </bean>
+
+    <bean id="transactionDAO.impl.mongo" class="fraud.db.dao.mongo.TransactionDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="velocityConfigDAO.impl.mongo" class="fraud.db.dao.mongo.VelocityConfigDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <bean id="currencyExchangeDAO.impl.mongo" class="fraud.db.dao.mongo.CurrencyExchangeDAO"
+          autowire-candidate="false"
+          p:mongoTemplate-ref="mongoTemplate"/>
+
+    <!-- =================================================================
+                              Currency Exchange Rate update
+    ================================================================= -->
+    <bean id="currencyExchangeScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+          p:autoStartup="true">
+        <property name="triggers">
+            <bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+                  p:misfireInstructionName="MISFIRE_INSTRUCTION_DO_NOTHING"
+                  p:cronExpression="${mongoTemplate/scheduledCurrencUpdateCronExpression}">
+                <property name="jobDetail">
+                    <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+                          p:targetObject-ref="currencyExchangeDAO.impl.mongo"
+                          p:targetMethod="performScheduledCurrencyUpdate"/>
+                </property>
+            </bean>
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.threadPool.threadCount">1</prop>
+                <prop key="org.quartz.threadPool.threadPriority">5</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- =================================================================
+                               Configuration Data update
+    ====================================================================== -->
+    <bean id="dbCache" class="fraud.util.DBCache"
+          p:velocityConfigDAO-ref="velocityConfigDAO.impl.mongo"/>
+
+    <bean id="configurationDataScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+          p:autoStartup="true">
+        <property name="triggers">
+            <bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+                  p:misfireInstructionName="MISFIRE_INSTRUCTION_DO_NOTHING"
+                  p:cronExpression="${mongoTemplate/scheduledConfigurationUpdateCronExpression}">
+                <property name="jobDetail">
+                    <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+                          p:targetObject-ref="dbCache"
+                          p:targetMethod="invalidate"/>
+                </property>
+            </bean>
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.threadPool.threadCount">1</prop>
+                <prop key="org.quartz.threadPool.threadPriority">5</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <!-- =========================================================================================
+                              Cassandra Data Source
+    ========================================================================================== -->
+
+    <bean id="cassandraClusterBuilder" class="com.datastax.driver.core.Cluster" factory-method="builder"/>
+    <bean id="cassandraClusterBuilder.withHost" factory-bean="cassandraClusterBuilder" factory-method="addContactPoint"
+          c:address="${cassandra.nodes}"/>
+
+    <bean id="cassandraCluster" factory-bean="cassandraClusterBuilder.withHost" factory-method="build"/>
+
+    <bean id="cassandraSession" factory-bean="cassandraCluster" factory-method="connect"/>
+
+    <bean id="mappingSession" class="com.datastax.driver.mapping.MappingSession"
+          c:keyspace="${cassandra.keyspace}" c:session-ref="cassandraSession"/>
+
+    <bean id="derogDAO.impl.cassandra" class="fraud.db.dao.cassandra.DerogDAO"
+          p:mappingSession-ref="mappingSession"/>
+
+    <bean id="velocityDAO.impl.cassandra" class="fraud.db.dao.cassandra.CassandraVelocityDAO"
+          p:mappingSession-ref="mappingSession"/>
+
+</beans>

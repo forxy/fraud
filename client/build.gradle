@@ -1,0 +1,57 @@
+sourceSets {
+    funcTest {
+        java { srcDir 'src/funcTest/groovy' }
+        resources { srcDir 'src/funcTest/resources' }
+        output.resourcesDir = output.classesDir
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = compileClasspath + output
+    }
+}
+
+task dvtTest(type: Test, dependsOn: funcTestClasses) {
+    jvmArgs '-Xms512m', '-Xmx1024m', '-XX:MaxPermSize=256m', '-XX:+HeapDumpOnOutOfMemoryError'
+    maxHeapSize '1024m'
+    testClassesDir = sourceSets.funcTest.output.classesDir
+    classpath = sourceSets.funcTest.runtimeClasspath + sourceSets.test.runtimeClasspath
+    systemProperties System.properties
+    includes = ['**/dvt/*Test.class']
+
+    //testLogging.showStandardStreams = true
+    scanForTestClasses = false
+}
+
+task funcTest(type: Test, dependsOn: funcTestClasses) {
+    jvmArgs '-Xms512m', '-Xmx1024m', '-XX:MaxPermSize=256m', '-XX:+HeapDumpOnOutOfMemoryError'
+    maxHeapSize '1024m'
+    testClassesDir = sourceSets.funcTest.output.classesDir
+    classpath = sourceSets.funcTest.runtimeClasspath + sourceSets.test.runtimeClasspath
+    systemProperties System.properties
+    includes = ['**/fnt/*Test.class']
+
+    //testLogging.showStandardStreams = true
+    scanForTestClasses = false
+}
+
+jar { from sourceSets.main.allJava }
+
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":fraud.api")
+    compile "fraud:common.rest:${rev_fraud_common}"
+
+    // --------------------- COMMON --------------------------------------
+    compile "org.slf4j:slf4j-api:${rev_slf4j}"
+    compile "ch.qos.logback:logback-core:${rev_logback}"
+    compile "ch.qos.logback:logback-classic:${rev_logback}"
+
+    // --------------------- SPRING --------------------------------------
+    compile "org.springframework:spring-core:${rev_spring}"
+    compile "org.springframework:spring-beans:${rev_spring}"
+    compile "org.springframework:spring-context:${rev_spring}"
+
+    // ===================== TEST ========================================
+    testCompile "junit:junit:${rev_junit}"
+    testCompile "org.springframework:spring-test:${rev_spring}"
+}

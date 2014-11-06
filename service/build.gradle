@@ -1,0 +1,94 @@
+// ========== Deploy ====================================================
+
+buildscript {
+    repositories {
+        maven {
+            url "file://$System.env.OUTPUT_ROOT/deliverables/"
+        }
+    }
+    dependencies {
+        classpath "fraud:common.deploy:$rev_fraud_common"
+    }
+}
+
+apply plugin: 'deploy'
+
+deploy {
+    serviceName = 'fraud'
+    basePort = 12000
+    useSSL = true
+    keyAlias = 'oauth'
+    keystoreFile = 'conf/FraudService/appconfig/oauth.jks'
+    keystorePass = '5ecret0AUTHPa55word'
+    truststoreFile = 'conf/FraudService/appconfig/oauth.jks'
+    truststorePass = '5ecret0AUTHPa55word'
+    configIncludes = ['**/*.drl']
+}
+
+// ========== Dependencies ==============================================
+
+dependencies {
+    // --------------------- FORXY ---------------------------------------
+    compile project(":fraud.api")
+    compile "fraud:common.rest:$rev_fraud_common"
+    compile "fraud:common.utils:$rev_fraud_common"
+    compile "fraud:common.status:$rev_fraud_common"
+    compile "fraud:common.logging:$rev_fraud_common"
+
+    // --------------------- CXF -----------------------------------------
+    compile "org.apache.cxf:cxf-rt-frontend-jaxrs:$rev_cxf"
+    compile "org.apache.cxf:cxf-rt-rs-service-description:$rev_cxf"
+
+    // --------------------- JAX-WS --------------------------------------
+    compile "org.apache.cxf:cxf-rt-frontend-jaxws:$rev_cxf"
+    compile "org.apache.cxf:cxf-rt-transports-http:$rev_cxf"
+
+    // --------------------- COMMON --------------------------------------
+    compile "commons-collections:commons-collections:$rev_common_collections"
+    compile "ch.qos.logback:logback-classic:$rev_logback"
+    compile "org.quartz-scheduler:quartz:$rev_quartz"
+    compile "joda-time:joda-time:$rev_joda_time"
+
+    // --------------------- GROOVY --------------------------------------
+    compile "org.codehaus.gpars:gpars:$rev_gpars"
+
+    // --------------------- MONGO ---------------------------------------
+    compile "org.mongodb:mongo-java-driver:$rev_mongo"
+
+    // --------------------- CASSANDRA -----------------------------------
+    compile("com.valchkou.datastax:cassandra-driver-mapping:$rev_cassandra_jpa") {
+        exclude group: 'org.eclipse.persistence', module: 'javax.persistence'
+    }
+
+    // --------------------- REDIS ---------------------------------------
+    compile "redis.clients:jedis:$rev_jedis"
+    compile "org.springframework.data:spring-data-redis:$rev_spring_data_redis"
+
+    // --------------------- SPRING --------------------------------------
+    compile "org.springframework:spring-core:$rev_spring"
+    compile "org.springframework:spring-beans:$rev_spring"
+    compile "org.springframework:spring-context:$rev_spring"
+    compile "org.springframework:spring-context-support:$rev_spring"
+    compile "org.springframework:spring-aop:$rev_spring"
+    compile "org.springframework:spring-web:$rev_spring"
+    compile "org.springframework:spring-orm:$rev_spring"
+
+    // --------------------- ENCRYPTION ----------------------------------
+    compile "org.jasypt:jasypt:$rev_jasypt"
+    compile "org.jasypt:jasypt-spring3:$rev_jasypt"
+
+    // --------------------- DROOLS --------------------------------------
+    compile "org.drools:drools-core:$rev_drools"
+    compile "org.drools:drools-compiler:$rev_drools"
+    compile "org.drools:drools-spring:$rev_drools"
+
+    // --------------------- JSON ----------------------------------------
+    // for currency exchange rates parsing
+    compile "org.json:json:$rev_org_json"
+
+    // ===================== TEST ========================================
+    testCompile "org.springframework:spring-test:$rev_spring"
+    testCompile "junit:junit:$rev_junit"
+    testCompile "org.easymock:easymock:$rev_easymock"
+    testCompile "fraud:common.test-utils:$rev_fraud_common"
+}

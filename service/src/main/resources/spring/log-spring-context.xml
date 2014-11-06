@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns='http://www.springframework.org/schema/beans'
+       xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="configuration.performance" class="common.support.Configuration">
+        <property name="settings">
+            <map key-type="java.lang.Object" value-type="java.lang.String">
+                <entry key="#{T(common.logging.LoggingServletFilter$Configs).IsHttpInfoLoggingEnabled}"
+                       value="true"/>
+                <entry key="#{T(common.logging.AbstractPerformanceLogger$Configs).IsPayloadLoggingEnabled}"
+                       value="true"/>
+                <entry key="#{T(common.logging.AbstractPerformanceLogger$Configs).IsPerformanceLoggingEnabled}"
+                       value="true"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- ================= SERVICE ================================================================================= -->
+
+    <bean id="configuration.performance.endpoint" class="common.support.Configuration"
+          parent="configuration.performance">
+        <property name="settings">
+            <map key-type="java.lang.Object" value-type="java.lang.String" merge="true">
+                <entry key="#{T(common.logging.support.Fields).ActivityName}" value="endpoint"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="performance.logger.request"
+          class="common.logging.writer.LogWriter" c:name="fraud.performance.request"/>
+    <bean id="performance.logger.response"
+          class="common.logging.writer.LogWriter" c:name="fraud.performance.response"/>
+
+    <bean id="performance.loggingFilter"
+          class="common.logging.LoggingServletFilter"
+          p:configuration-ref="configuration.performance.endpoint"
+          p:requestWriter-ref="performance.logger.request"
+          p:responseWriter-ref="performance.logger.response">
+        <property name="requestFieldExtractors">
+            <bean class="common.logging.extractor.SpringELFieldExtractor">
+                <property name="extractRules">
+                    <map>
+                        <entry key="Client"
+                               value="#request.getParameter('client_id')?:#requestHeaders['client-id']?:null"/>
+                        <entry key="TransactionGUID"
+                               value="#request.getParameter('transaction_guid')?:#requestHeaders['transaction-guid']?:null"/>
+                        <entry key="MessageGUID"
+                               value="#request.getParameter('message_guid')?:#requestHeaders['message-guid']?:null"/>
+                        <entry key="OperationName" value="#request.requestURI.matches('.*/velocity/?') and #request.getMethod().equals('POST') ? 'CassandraCheck' :
+                                #request.requestURI.matches('.*/velocity/rcheck/?') and #request.getMethod().equals('POST') ? 'RedisCheck' :
+                                #request.requestURI.matches('.*/velocity/metrics/[?metric_type=\w+&amp;metric_value=\w+]?') and #request.getMethod().equals('GET') ? 'GetVelocityMetrics' :
+                                #request.requestURI.matches('.*/velocity/data_list/[?metric_type=\w+&amp;metric_value=\w+].*') and #request.getMethod().equals('GET') ? 'GetVelocityDataLog' :
+                                #request.requestURI.matches('.*/velocity/metric/[?metric_type=\w+&amp;metric_value=\w+]?') and #request.getMethod().equals('GET') ? 'GetVelocityMetric' :
+                                #request.requestURI.matches('.*/velocity/data/[?metric_type=\w+&amp;metric_value=\w+]?') and #request.getMethod().equals('GET') ? 'GetVelocityData' :
+                                null"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="responseFieldExtractors">
+            <bean class="common.logging.extractor.SpringELFieldExtractor">
+                <property name="extractRules">
+                    <map>
+                        <entry key="TransactionGUID" value="#responseHeaders['Transaction-GUID']"/>
+                        <entry key="MessageGUID" value="#responseHeaders['Message-GUID']"/>
+                        <entry key="StatusCode">
+                            <value>(#response.responseStatus==200 or #response.responseStatus==201 or
+                                #response.responseStatus==204) ? '0' :
+                                #response.responseStatus==400 ? '-1' :
+                                #response.responseStatus==500 ? #payload.replaceAll('.*?"code":\s*"?(\d+).*','$1') :
+                                #response.responseStatus
+                            </value>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- ================= DAO ===================================================================================== -->
+
+    <bean id="configuration.performance.dao" class="common.support.Configuration"
+          parent="configuration.performance"/>
+
+    <bean id="databaseExceptionHandler"
+          class="common.logging.exceptions.DatabaseExceptionHandler"
+          p:databaseHost="${mongoTemplate/host}:${mongoTemplate/port}"/>
+
+    <bean id="fraud.performance.logger.dao"
+          class="common.logging.writer.LogWriter" c:name="fraud.performance.dao"/>
+
+    <bean id="performance.dao.loggingInterceptor"
+          class="common.logging.LoggingInterceptor"
+          p:configuration-ref="configuration.performance.dao"
+          p:responseWriter-ref="fraud.performance.logger.dao"
+          p:exceptionHandler-ref="databaseExceptionHandler"/>
+
+    <bean id="transactionDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.db.dao.ITransactionDAO"
+          p:target-ref="transactionDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="velocityConfigDAO.mongo.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.db.dao.IVelocityConfigDAO"
+          p:target-ref="velocityConfigDAO.impl.mongo">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="derogDAO.cassandra.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.db.dao.IDerogDAO"
+          p:target-ref="derogDAO.impl.cassandra">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="velocityDAO.cassandra.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.db.dao.cassandra.ICassandraVelocityDAO"
+          p:target-ref="velocityDAO.impl.cassandra">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="velocityDAO.redis.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.db.dao.redis.IRedisVelocityDAO"
+          p:target-ref="velocityDAO.impl.redis">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="performance.dao.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ================= IMPLEMENTATION ========================================================================== -->
+
+    <bean id="configuration.performance.impl" class="common.support.Configuration"
+          parent="configuration.performance"/>
+
+    <bean id="serviceExceptionHandler"
+          class="common.logging.exceptions.ServiceExceptionHandler"/>
+
+    <bean id="performance.logger.impl"
+          class="common.logging.writer.LogWriter" c:name="fraud.performance.impl"/>
+
+    <bean id="impl.loggingInterceptor"
+          class="common.logging.LoggingInterceptor"
+          p:configuration-ref="configuration.performance.impl"
+          p:responseWriter-ref="performance.logger.impl"
+          p:exceptionHandler-ref="serviceExceptionHandler"/>
+
+    <bean id="fraudCheckService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.service.IFraudCheckService"
+          p:target-ref="fraudCheckService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="derogService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.service.derog.IDerogService"
+          p:target-ref="derogService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="velocityService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.service.velocity.IVelocityService"
+          p:target-ref="velocityService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="velocityConfigService.perf" class="org.springframework.aop.framework.ProxyFactoryBean"
+          autowire-candidate="false"
+          p:proxyInterfaces="fraud.service.velocity.IVelocityConfigService"
+          p:target-ref="velocityConfigService.impl">
+        <property name="interceptorNames">
+            <list>
+                <idref bean="impl.loggingInterceptor"/>
+            </list>
+        </property>
+    </bean>
+</beans>

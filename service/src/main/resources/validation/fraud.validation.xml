@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<oval xmlns="http://oval.sf.net/oval-configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://oval.sf.net/oval-configuration http://oval.sourceforge.net/oval-configuration.xsd">
+    <class type="fraud.api.v1.check.Transaction">
+        <!-- ================================================================= -->
+        <!--                            Transaction                            -->
+        <!-- ================================================================= -->
+    </class>
+</oval>

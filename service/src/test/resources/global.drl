@@ -1,0 +1,62 @@
+package fraud
+dialect "mvel"
+
+import org.slf4j.LoggerFactory
+import java.util.Map;
+import java.util.Date;
+import java.util.HashMap;
+import java.lang.Integer;
+import java.lang.Double;
+import org.slf4j.LoggerFactory
+import fraud.api.v1.check.payment.Amount
+import fraud.api.v1.check.payment.Payment
+import fraud.api.v1.check.Transaction
+import fraud.api.v1.check.product.travel.TravelProduct
+import fraud.service.rules.RulesProcessor
+import fraud.test.logic.rules.RulesProcessorTest
+import fraud.db.dao.mongo.CurrencyExchangeDAO
+
+import function org.drools.core.util.StringUtils.isEmpty
+import fraud.test.logic.rules.RulesProcessorTest
+
+rule "USD Value"
+no-loop
+when
+    $usdDAO : CurrencyExchangeDAO()
+    $transaction : Transaction($products : products, $payments : payments)
+    $product : TravelProduct() from $products
+    $payment : Payment() from $payments
+    $price : Amount() from $product.price
+    $amount : Amount() from $payment.amount
+then
+    System.out.println( "Prices:" + $price.value)
+    System.out.println( "Amount:" + $amount.value)
+end
+
+rule "Prive is over 5000"
+no-loop
+when
+     $transaction : Transaction()
+     $product : TravelProduct ( price.usdValue > 500 ) from $transaction.products
+     $attributes : Map () from $transaction.attributes
+then
+     $transaction.getAttributes.put("IsPriceOver5000", true)
+     System.out.println( "Price is over 5000" + $product)
+end
+
+rule "Print product"
+when
+    $transaction : Transaction ( $products : products )
+then
+    LoggerFactory.getLogger(RulesProcessorTest.class).debug(String.format("Transaction [%s] and and products [%s]", $transaction, $products));
+    System.out.println( "Transaction ["+ $transaction +"] and and products ["+ $products +"]");
+end
+
+rule "Days until departure"
+when
+    $transaction : Transaction()
+    $product : TravelProduct($millis : (getDateStart().getTime() - new Date().getTime())) from $transaction.products
+then
+    $product.getAttributes().put("DaysUntilDeparture", Math.abs((Double)$millis / 86400000));
+    $product.getAttributes().put("HoursUntilDeparture", Math.abs((Double)$millis / 3600000));
+end

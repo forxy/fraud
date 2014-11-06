@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- System Status component-->
+    <bean id="systemStatusService" class="fraud.service.SystemStatusService"
+          p:transactionDAO-ref="transactionDAO.mongo.perf"/>
+
+    <bean id="systemStatusController" class="common.rest.SystemStatusController"
+          p:systemStatusService-ref="systemStatusService"/>
+
+    <!-- business logic component-->
+
+    <bean id="fraudCheckService.impl" class="fraud.service.FraudCheckService"
+          p:transactionDAO-ref="transactionDAO.mongo.perf"/>
+
+    <bean id="derogService.impl" class="fraud.service.derog.DerogService"
+          p:blackListDAO-ref="derogDAO.cassandra.perf"/>
+
+    <bean id="velocityService.impl" class="fraud.service.velocity.VelocityService"
+          p:cassandraDAO-ref="velocityDAO.cassandra.perf"
+          p:redisDAO-ref="velocityDAO.redis.perf"
+          p:dbCache-ref="dbCache"/>
+
+    <bean id="velocityConfigService.impl" class="fraud.service.velocity.VelocityConfigService"
+          p:velocityConfigDAO-ref="velocityConfigDAO.mongo.perf"/>
+
+    <!-- service endpoints definitions-->
+    <bean id="fraudServiceController" class="fraud.controller.v1.FraudCheckController"
+          p:fraudCheckService-ref="fraudCheckService.perf"/>
+
+    <bean id="derogController" class="fraud.controller.v1.DerogController"
+          p:blackListManager-ref="derogService.perf"/>
+
+    <bean id="velocityController" class="fraud.controller.v1.VelocityController"
+          p:velocityManager-ref="velocityService.perf"/>
+
+    <bean id="velocityConfigController" class="fraud.controller.v1.VelocityConfigController"
+          p:velocityConfigManager-ref="velocityConfigService.perf"/>
+
+</beans>

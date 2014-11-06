@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/fraud.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>../logs/fraud.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <Pattern>%d{ISO8601} [%t] [%cn] %-5p %c{1} - %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/fraud-perf.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>../logs/fraud-perf.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>200MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <Pattern>%d{ISO8601} %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="PERF_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="PERF"/>
+    </appender>
+
+    <logger name="fraud.performance" level="INFO">
+        <appender-ref ref="PERF_ASYNC"/>
+    </logger>
+
+    <logger name="fraud.test" level="TRACE"/>
+
+    <root level="warn"/>
+
+</configuration>
