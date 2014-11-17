@@ -44,21 +44,20 @@ enum FraudServiceEventLogId implements EventLogBase {
 
     EventLogBase.Level logLevel;
     String formatString;
-    int eventId;
-    int responseId;
+    int eventID;
+    int responseID;
     EventType eventType;
 
-    private FraudServiceEventLogId(
-            final int eventId, final int responseId, final String formatString, final EventType eventType) {
+    private FraudServiceEventLogId(final int eventId, final int responseId, final String formatString,
+                                   final EventType eventType) {
         this(eventId, responseId, EventLogBase.Level.ERROR, formatString, eventType);
     }
 
-    private FraudServiceEventLogId(
-            final int eventId, final int responseId, final EventLogBase.Level level, final String formatString,
-            final EventType eventType) {
-        this.eventId = eventId;
-        this.responseId = responseId;
-        logLevel = level;
+    private FraudServiceEventLogId(final int eventID, final int responseId, final EventLogBase.Level logLevel,
+                                   final String formatString, final EventType eventType) {
+        this.eventID = eventID;
+        this.responseID = responseId;
+        this.logLevel = logLevel;
         this.formatString = formatString;
         this.eventType = eventType;
     }

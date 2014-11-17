@@ -1,7 +1,7 @@
 package fraud.client.v1
 
 import common.exceptions.ClientException
-import common.exceptions.HttpEventLogId
+import common.exceptions.HttpEventLogID
 import common.pojo.StatusEntity
 import common.rest.client.RestServiceClientSupport
 import common.rest.client.transport.HttpClientSSLKeyStore
@@ -26,7 +26,7 @@ class FraudServiceClient extends RestServiceClientSupport implements IFraudServi
 
     private String endpoint;
 
-    private String clientId;
+    private String clientID;
 
     static {
         try {
@@ -34,16 +34,16 @@ class FraudServiceClient extends RestServiceClientSupport implements IFraudServi
             final byte[] trustStoreBytes = IOUtils.toByteArray(trustStoreStream);
             TRUST_STORE = new HttpClientSSLKeyStore(new ByteArrayInputStream(trustStoreBytes), '5ecret0AUTHPa55word');
         } catch (Exception e) {
-            throw new ClientException(new StatusEntity('400', e), e, HttpEventLogId.InvalidClientInput);
+            throw new ClientException(new StatusEntity('400', e), e, HttpEventLogID.InvalidClientInput);
         }
     }
 
     FraudServiceClient() {
     }
 
-    FraudServiceClient(final String endpoint, final String clientId, final ITransport transport) {
+    FraudServiceClient(final String endpoint, final String clientID, final ITransport transport) {
         this.endpoint = endpoint;
-        this.clientId = clientId;
+        this.clientID = clientID;
         this.transport = transport;
 
         // @formatter:off
@@ -65,7 +65,7 @@ class FraudServiceClient extends RestServiceClientSupport implements IFraudServi
         headers.put(HttpHeaders.ACCEPT, JSON_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_TYPE, JSON_CONTENT_TYPE);
         headers.put(TRANSACTION_GUID, txGUID);
-        headers.put(CLIENT_ID, clientId);
+        headers.put(CLIENT_ID, clientID);
         return headers;
     }
 
@@ -94,6 +94,6 @@ class FraudServiceClient extends RestServiceClientSupport implements IFraudServi
     }
 
     void setClientId(String clientId) {
-        this.clientId = clientId;
+        this.clientID = clientId;
     }
 }
