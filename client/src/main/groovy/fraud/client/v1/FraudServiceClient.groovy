@@ -1,7 +1,7 @@
 package fraud.client.v1
 
 import common.exceptions.ClientException
-import common.exceptions.HttpEventLogID
+import common.exceptions.HttpEvent
 import common.pojo.StatusEntity
 import common.rest.client.RestServiceClientSupport
 import common.rest.client.transport.HttpClientSSLKeyStore
@@ -34,7 +34,7 @@ class FraudServiceClient extends RestServiceClientSupport implements IFraudServi
             final byte[] trustStoreBytes = IOUtils.toByteArray(trustStoreStream);
             TRUST_STORE = new HttpClientSSLKeyStore(new ByteArrayInputStream(trustStoreBytes), '5ecret0AUTHPa55word');
         } catch (Exception e) {
-            throw new ClientException(new StatusEntity('400', e), e, HttpEventLogID.InvalidClientInput);
+            throw new ClientException(new StatusEntity('400', e), e, HttpEvent.InvalidClientInput);
         }
     }
 
