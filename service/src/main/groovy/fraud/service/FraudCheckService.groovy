@@ -7,7 +7,7 @@ import common.exceptions.ServiceException
 import common.pojo.EntityPage
 import common.pojo.SortDirection
 import fraud.db.dao.ITransactionDAO
-import fraud.exceptions.FraudServiceEventLogId
+import fraud.exceptions.FraudServiceEvent
 import fraud.api.v1.check.Transaction
 
 /**
@@ -44,7 +44,7 @@ class FraudCheckService implements IFraudCheckService {
             final Page<Transaction> p = transactionDAO.findAll(pageRequest, filter)
             new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(FraudServiceEventLogId.InvalidPageNumber, page)
+            throw new ServiceException(FraudServiceEvent.InvalidPageNumber, page)
         }
     }
 
@@ -52,7 +52,7 @@ class FraudCheckService implements IFraudCheckService {
     Transaction getTransaction(final String transactionID) {
         Transaction transaction = transactionDAO.findOne(transactionID)
         if (transaction == null) {
-            throw new ServiceException(FraudServiceEventLogId.TransactionNotFound, transactionID)
+            throw new ServiceException(FraudServiceEvent.TransactionNotFound, transactionID)
         }
         transaction
     }

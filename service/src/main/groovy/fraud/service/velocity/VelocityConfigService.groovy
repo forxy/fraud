@@ -4,7 +4,7 @@ import common.exceptions.ServiceException
 import common.pojo.EntityPage
 import common.pojo.SortDirection
 import fraud.db.dao.IVelocityConfigDAO
-import fraud.exceptions.FraudServiceEventLogId
+import fraud.exceptions.FraudServiceEvent
 import fraud.api.v1.velocity.VelocityConfig
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -39,7 +39,7 @@ class VelocityConfigService implements IVelocityConfigService {
             final Page<VelocityConfig> p = velocityConfigDAO.findAll(pageRequest, filter)
             new EntityPage<>(p.getContent(), p.getSize(), p.getNumber(), p.getTotalElements())
         } else {
-            throw new ServiceException(FraudServiceEventLogId.InvalidPageNumber, page)
+            throw new ServiceException(FraudServiceEvent.InvalidPageNumber, page)
         }
     }
 
@@ -47,7 +47,7 @@ class VelocityConfigService implements IVelocityConfigService {
     VelocityConfig getVelocityConfig(final String id) {
         VelocityConfig config = velocityConfigDAO.findOne(id)
         if (config == null) {
-            throw new ServiceException(FraudServiceEventLogId.VelocityConfigNotFound, id)
+            throw new ServiceException(FraudServiceEvent.VelocityConfigNotFound, id)
         }
         config
     }
@@ -59,7 +59,7 @@ class VelocityConfigService implements IVelocityConfigService {
             config.id = id
             velocityConfigDAO.save(config)
         } else {
-            throw new ServiceException(FraudServiceEventLogId.VelocityConfigNotFound, id)
+            throw new ServiceException(FraudServiceEvent.VelocityConfigNotFound, id)
         }
     }
 
@@ -69,7 +69,7 @@ class VelocityConfigService implements IVelocityConfigService {
         if (!velocityConfigDAO.exists(config.primaryMetrics)) {
             velocityConfigDAO.save(config)
         } else {
-            throw new ServiceException(FraudServiceEventLogId.VelocityConfigAlreadyExists, config.primaryMetrics)
+            throw new ServiceException(FraudServiceEvent.VelocityConfigAlreadyExists, config.primaryMetrics)
         }
     }
 
@@ -78,7 +78,7 @@ class VelocityConfigService implements IVelocityConfigService {
         if (velocityConfigDAO.findOne(id)) {
             velocityConfigDAO.delete(id)
         } else {
-            throw new ServiceException(FraudServiceEventLogId.VelocityConfigNotFound, id)
+            throw new ServiceException(FraudServiceEvent.VelocityConfigNotFound, id)
         }
     }
 }
