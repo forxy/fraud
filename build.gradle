@@ -9,7 +9,6 @@ subprojects {
     repositories {
         jcenter()
         ivy { url "file://$System.env.OUTPUT_ROOT/deliverables/" }
-
         uploadArchives { repositories { ivy { url "file://$System.env.OUTPUT_ROOT/deliverables/" } } }
     }
 

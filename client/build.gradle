@@ -16,7 +16,6 @@ task dvtTest(type: Test, dependsOn: funcTestClasses) {
     systemProperties System.properties
     includes = ['**/dvt/*Test.class']
 
-    //testLogging.showStandardStreams = true
     scanForTestClasses = false
 }
 
@@ -28,30 +27,29 @@ task funcTest(type: Test, dependsOn: funcTestClasses) {
     systemProperties System.properties
     includes = ['**/fnt/*Test.class']
 
-    //testLogging.showStandardStreams = true
     scanForTestClasses = false
 }
 
-jar { from sourceSets.main.allJava }
+jar { from sourceSets.main.allSource }
 
 // ========== Dependencies ==============================================
 
 dependencies {
     // --------------------- FORXY ---------------------------------------
     compile project(":fraud.api")
-    compile "fraud:common.rest:${rev_fraud_common}"
+    compile "fraud:common.rest:$rev_fraud_common"
 
     // --------------------- COMMON --------------------------------------
-    compile "org.slf4j:slf4j-api:${rev_slf4j}"
-    compile "ch.qos.logback:logback-core:${rev_logback}"
-    compile "ch.qos.logback:logback-classic:${rev_logback}"
+    compile "org.slf4j:slf4j-api:$rev_slf4j"
+    compile "ch.qos.logback:logback-core:$rev_logback"
+    compile "ch.qos.logback:logback-classic:$rev_logback"
 
     // --------------------- SPRING --------------------------------------
-    compile "org.springframework:spring-core:${rev_spring}"
-    compile "org.springframework:spring-beans:${rev_spring}"
-    compile "org.springframework:spring-context:${rev_spring}"
+    compile "org.springframework:spring-core:$rev_spring"
+    compile "org.springframework:spring-beans:$rev_spring"
+    compile "org.springframework:spring-context:$rev_spring"
 
     // ===================== TEST ========================================
+    testCompile "fraud:common.spring-support:$rev_fraud_common"
     testCompile "junit:junit:${rev_junit}"
-    testCompile "org.springframework:spring-test:${rev_spring}"
 }

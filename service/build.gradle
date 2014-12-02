@@ -1,11 +1,7 @@
 // ========== Deploy ====================================================
 
 buildscript {
-    repositories {
-        maven {
-            url "file://$System.env.OUTPUT_ROOT/deliverables/"
-        }
-    }
+    repositories { maven { url "file://$System.env.OUTPUT_ROOT/deliverables/" } }
     dependencies {
         classpath "fraud:common.deploy:$rev_fraud_common"
     }
