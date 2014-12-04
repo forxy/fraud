@@ -1,7 +1,7 @@
 package fraud.controller.v1
 
-import common.pojo.SortDirection
-import common.pojo.StatusEntity
+import common.api.SortDirection
+import common.api.StatusEntity
 import common.rest.AbstractService
 import fraud.service.velocity.IVelocityConfigService
 import fraud.api.v1.velocity.AggregationConfig
@@ -60,7 +60,7 @@ class VelocityConfigController extends AbstractService {
                                @Context final UriInfo uriInfo,
                                @Context final HttpHeaders headers) {
         velocityConfigManager.createVelocityConfig(velocityConfig)
-        ok(new StatusEntity('200', "$uriInfo.absolutePath$velocityConfig.id")).build()
+        ok(new StatusEntity("$uriInfo.absolutePath$velocityConfig.id")).build()
     }
 
     @PUT
@@ -71,7 +71,7 @@ class VelocityConfigController extends AbstractService {
                                   @Context final UriInfo uriInfo,
                                   @Context final HttpHeaders headers) {
         velocityConfigManager.updateVelocityConfig(id, velocityConfig)
-        ok(new StatusEntity('200', "$uriInfo.absolutePath")).build()
+        ok(new StatusEntity("$uriInfo.absolutePath")).build()
     }
 
     @DELETE
@@ -80,6 +80,6 @@ class VelocityConfigController extends AbstractService {
                                   @Context final UriInfo uriInfo,
                                   @Context final HttpHeaders headers) {
         velocityConfigManager.deleteVelocityConfig(id)
-        ok(new StatusEntity('200', "VelocityConfig with ID='$id' has been successfully removed")).build()
+        ok(new StatusEntity("VelocityConfig with ID='$id' has been successfully removed")).build()
     }
 }

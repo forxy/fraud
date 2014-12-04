@@ -2,9 +2,10 @@ package fraud.test.dvt
 
 import fraud.test.BaseFraudServiceTest
 import org.apache.commons.lang.RandomStringUtils
-import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
+
+import static org.junit.Assert.assertNotNull
 
 /**
  * Test success path for AuthService client
@@ -16,49 +17,45 @@ class FraudServiceClientSuccessPathTest extends BaseFraudServiceTest {
     @Ignore
     @Test
     void testSimpleVelocityCassandraCheck() {
-        Assert.assertNotNull(fraudServiceClient)
-        String transactionGUID = UUID.randomUUID().toString()
+        assertNotNull fraudServiceClient
         def testData = [
                 'Email'     : ['aaa@mail.com'],
                 'Amount'    : ['500.00'],
                 'CreditCard': ['1111222233334444'],
         ] as Map<String, String[]>
         def metrics = fraudServiceClient.cassandraCheck(transactionGUID, testData)
-        Assert.assertNotNull(metrics)
+        assertNotNull(metrics)
     }
 
     @Test
     void testSimpleVelocityRedisCheck() {
-        Assert.assertNotNull(fraudServiceClient)
-        String transactionGUID = UUID.randomUUID().toString()
+        assertNotNull fraudServiceClient
         def testData = [
                 'Email'     : ['aaa@mail.com'],
                 'Amount'    : ['500.00'],
                 'CreditCard': ['1111222233334444'],
         ] as Map<String, String[]>
         def metrics = fraudServiceClient.redisCheck(transactionGUID, testData)
-        Assert.assertNotNull(metrics)
+        assertNotNull metrics
     }
 
-    //@Ignore
+    @Ignore
     @Test
     void stressTest() {
-        Assert.assertNotNull(fraudServiceClient)
+        assertNotNull fraudServiceClient
         10000.times {
-
-            String transactionGUID = UUID.randomUUID().toString()
             def testData = [
                     'BillAddress': [RandomStringUtils.randomAlphabetic(50)],
                     'Purchases'  : ["${RAND.nextInt(5000)}.00".toString()],
-                    'CreditCard' : [generateCC(), generateCC()],
-                    'TUID'       : [UUID.randomUUID().toString()],
+                    'CreditCard' : [CC, CC],
+                    'TUID'       : [GUID],
                     'Email'      : ["aaa${RAND.nextInt(1000)}@gmail.com".toString()],
-                    'DeviceID'   : [UUID.randomUUID().toString()],
-                    'IPAddress'  : [generateIPAddress()],
-                    'PhoneNumber': [generatePhoneNumber()],
+                    'DeviceID'   : [GUID],
+                    'IPAddress'  : [IPAddress],
+                    'PhoneNumber': [phoneNumber],
             ] as Map<String, String[]>
             def redisMetrics = fraudServiceClient.redisCheck(transactionGUID, testData)
-            Assert.assertNotNull(redisMetrics)
+            assertNotNull redisMetrics
             //Assert.assertTrue(redisMetrics.size() > 0)
             //def cassandraMetrics = fraudServiceClient.cassandraCheck(transactionGUID, testData)
             //Assert.assertNotNull(cassandraMetrics)
@@ -67,26 +64,30 @@ class FraudServiceClientSuccessPathTest extends BaseFraudServiceTest {
         }
     }
 
-    private static String generateIPAddress() {
+    private static String getIPAddress() {
         String ip = ''
         ip += RAND.nextInt(256)
         3.times {
             ip += '.'
             ip += RAND.nextInt(256) as String
         }
-        ip
+        return ip
     }
 
-    private static String generateCC() {
+    private static String getCC() {
         String cc = ''
         16.times { cc += RAND.nextInt(10) }
-        cc
+        return cc
     }
 
-    private static String generatePhoneNumber() {
+    private static String getPhoneNumber() {
         String nbr = ''
         nbr += '+'
         12.times { nbr += RAND.nextInt(10) }
-        nbr
+        return nbr
+    }
+
+    private static String getGUID() {
+        UUID.randomUUID() as String
     }
 }

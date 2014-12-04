@@ -4,7 +4,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder
 import com.datastax.driver.mapping.EntityTypeParser
 import com.datastax.driver.mapping.meta.EntityFieldMetaData
 import com.datastax.driver.mapping.meta.EntityTypeMetadata
-import common.status.pojo.ComponentStatus
+import common.status.api.ComponentStatus
 import fraud.db.dao.IDerogDAO
 import fraud.api.v1.derog.BlackListItem
 import fraud.api.v1.derog.ListPartitionKey

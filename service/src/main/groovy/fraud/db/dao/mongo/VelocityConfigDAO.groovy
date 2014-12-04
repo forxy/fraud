@@ -1,7 +1,7 @@
 package fraud.db.dao.mongo
 
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
 import fraud.db.dao.IVelocityConfigDAO
 import fraud.api.v1.velocity.VelocityConfig
 import org.apache.commons.lang.exception.ExceptionUtils

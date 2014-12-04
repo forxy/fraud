@@ -1,6 +1,6 @@
 package fraud.controller.v1
 
-import common.pojo.SortDirection
+import common.api.SortDirection
 import common.rest.AbstractService
 import fraud.service.IFraudCheckService
 import fraud.api.v1.check.Transaction

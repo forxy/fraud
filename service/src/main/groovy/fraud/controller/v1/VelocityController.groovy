@@ -83,7 +83,7 @@ class VelocityController extends AbstractService {
         def metrics = [:]
         uriInfo.getQueryParameters()?.each { metric, values ->
             if (metric != 'start_date' && metric != 'end_date' && metric != 'start_id' && metric != 'end_id') {
-                metrics << [(metric): values.toArray()]
+                metrics[(metric)] = values.toArray()
             }
         }
         return metrics
@@ -94,7 +94,7 @@ class VelocityController extends AbstractService {
         uriInfo.getQueryParameters()?.each { metric, values ->
             if (values.size() > 0
                     && metric != 'start_date' && metric != 'end_date' && metric != 'start_id' && metric != 'end_id') {
-                filter << [(metric): values.first()]
+                filter[(metric)] = values.first()
             }
         }
         return filter

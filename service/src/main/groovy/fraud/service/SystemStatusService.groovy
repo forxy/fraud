@@ -1,9 +1,9 @@
 package fraud.service
 
 import common.status.ISystemStatusService
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
-import common.status.pojo.SystemStatus
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
+import common.status.api.SystemStatus
 import common.support.SystemProperties
 import fraud.db.dao.ITransactionDAO
 
@@ -19,16 +19,16 @@ class SystemStatusService implements ISystemStatusService {
         StatusType systemStatusType = null
         List<ComponentStatus> componentStatuses = []
         if (transactionDAO != null) {
-            componentStatuses.add(transactionDAO.getStatus())
+            componentStatuses.add(transactionDAO.status)
         } else {
             systemStatusType = StatusType.RED
         }
 
         // @formatter:off
         new SystemStatus(
-                SystemProperties.getServiceName(),
-                SystemProperties.getHostAddress(),
-                SystemProperties.getServiceVersion(),
+                SystemProperties.serviceName,
+                SystemProperties.hostAddress,
+                SystemProperties.serviceVersion,
                 systemStatusType != null ? systemStatusType : getTheWorstStatus(componentStatuses),
                 componentStatuses)
         // @formatter:on
@@ -36,9 +36,9 @@ class SystemStatusService implements ISystemStatusService {
 
     private static StatusType getTheWorstStatus(final List<ComponentStatus> componentStatuses) {
         StatusType theWorstStatus = StatusType.GREEN
-        for (ComponentStatus componentStatus : componentStatuses) {
-            if (componentStatus.getStatus().ordinal() > theWorstStatus.ordinal()) {
-                theWorstStatus = componentStatus.getStatus()
+        componentStatuses.each {
+            if (it.status.ordinal() > theWorstStatus.ordinal()) {
+                theWorstStatus = it.status
             }
         }
         theWorstStatus

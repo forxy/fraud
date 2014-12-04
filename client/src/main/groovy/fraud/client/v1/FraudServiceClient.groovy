@@ -2,7 +2,7 @@ package fraud.client.v1
 
 import common.exceptions.ClientException
 import common.exceptions.HttpEvent
-import common.pojo.StatusEntity
+import common.api.StatusEntity
 import common.rest.client.RestServiceClientSupport
 import common.rest.client.transport.HttpClientSSLKeyStore
 import common.rest.client.transport.ITransport

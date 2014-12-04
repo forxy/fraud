@@ -5,7 +5,7 @@ import com.datastax.driver.core.utils.UUIDs
 import com.datastax.driver.mapping.EntityTypeParser
 import com.datastax.driver.mapping.meta.EntityFieldMetaData
 import com.datastax.driver.mapping.meta.EntityTypeMetadata
-import common.status.pojo.ComponentStatus
+import common.status.api.ComponentStatus
 import fraud.api.v1.velocity.History
 import fraud.api.v1.velocity.Metric
 import fraud.api.v1.velocity.PartitionKey

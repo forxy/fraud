@@ -1,5 +1,6 @@
 package fraud.test
 
+import org.junit.Before
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,4 +17,11 @@ abstract class BaseFraudServiceTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     protected IFraudServiceClient fraudServiceClient;
+
+    String transactionGUID = null
+
+    @Before
+    void setUp() {
+        transactionGUID = UUID.randomUUID() as String;
+    }
 }

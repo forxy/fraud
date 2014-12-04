@@ -1,8 +1,8 @@
 package fraud.service.velocity
 
 import common.exceptions.ServiceException
-import common.pojo.EntityPage
-import common.pojo.SortDirection
+import common.api.EntityPage
+import common.api.SortDirection
 import fraud.db.dao.IVelocityConfigDAO
 import fraud.exceptions.FraudServiceEvent
 import fraud.api.v1.velocity.VelocityConfig

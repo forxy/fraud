@@ -8,8 +8,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import common.status.pojo.ComponentStatus
-import common.status.pojo.StatusType
+import common.status.api.ComponentStatus
+import common.status.api.StatusType
 import fraud.db.dao.ITransactionDAO
 import fraud.api.v1.check.Transaction
 

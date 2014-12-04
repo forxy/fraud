@@ -1,9 +1,9 @@
 package fraud.controller.v1
 
-import common.pojo.StatusEntity
+import common.api.StatusEntity
 import common.rest.AbstractService
-import fraud.service.derog.IDerogService
 import fraud.api.v1.derog.BlackListItem
+import fraud.service.derog.IDerogService
 
 import javax.ws.rs.*
 import javax.ws.rs.core.*
@@ -39,7 +39,7 @@ class DerogController extends AbstractService {
                             @Context final UriInfo uriInfo,
                             @Context final HttpHeaders headers) {
         blackListManager.add(blackListItem)
-        Response.ok(new StatusEntity('200', "$uriInfo.absolutePath" +
+        Response.ok(new StatusEntity("$uriInfo.absolutePath" +
                 "?type=$blackListItem.key.type" +
                 "&value=$blackListItem.key.value")).build()
     }
@@ -51,7 +51,7 @@ class DerogController extends AbstractService {
                              @Context final UriInfo uriInfo,
                              @Context final HttpHeaders headers) {
         blackListManager.update(blackListItem)
-        Response.ok(new StatusEntity('200', "$uriInfo.absolutePath" +
+        Response.ok(new StatusEntity("$uriInfo.absolutePath" +
                 "?type=$blackListItem.key.type" +
                 "&value=$blackListItem.key.value")).build()
     }
@@ -63,7 +63,7 @@ class DerogController extends AbstractService {
                              @Context final UriInfo uriInfo,
                              @Context final HttpHeaders headers) {
         blackListManager.delete(new BlackListItem())
-        Response.ok(new StatusEntity('200',
-                "BlackList item with type='$type' and value='$value' has been successfully deactivated")).build()
+        Response.ok(new StatusEntity("BlackList item with type='$type' " +
+                "and value='$value' has been successfully deactivated")).build()
     }
 }

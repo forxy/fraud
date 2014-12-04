@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import common.exceptions.ServiceException
-import common.pojo.EntityPage
-import common.pojo.SortDirection
+import common.api.EntityPage
+import common.api.SortDirection
 import fraud.db.dao.ITransactionDAO
 import fraud.exceptions.FraudServiceEvent
 import fraud.api.v1.check.Transaction

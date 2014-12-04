@@ -2,8 +2,8 @@ package fraud.exceptions
 
 import common.exceptions.EventLogBase
 
-import static common.exceptions.EventLogBase.*
-import static common.exceptions.EventLogBase.EventType.*
+import static common.exceptions.EventLogBase.EventType
+import static common.exceptions.EventLogBase.EventType.InvalidInput
 import static common.exceptions.EventLogBase.Level
 
 enum FraudServiceEvent implements EventLogBase {
@@ -42,9 +42,9 @@ enum FraudServiceEvent implements EventLogBase {
         this(eventId, responseId, Level.ERROR, eventType, formatString);
     }
 
-    private FraudServiceEvent(int eventID, int responseId, Level logLevel, EventType eventType, String formatString) {
+    private FraudServiceEvent(int eventID, int httpCode, Level logLevel, EventType eventType, String formatString) {
         this.eventID = BASE_EVENT_LOG_ID + eventID;
-        this.responseID = responseId;
+        this.httpCode = httpCode;
         this.logLevel = logLevel;
         this.formatString = formatString;
         this.eventType = eventType;
