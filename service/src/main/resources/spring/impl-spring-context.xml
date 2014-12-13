@@ -5,8 +5,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- System Status component-->
-    <bean id="systemStatusService" class="fraud.service.SystemStatusService"
-          p:transactionDAO-ref="transactionDAO.mongo.perf"/>
+    <bean id="systemStatusService" class="common.status.SystemStatusService">
+        <property name="components">
+            <list>
+                <ref bean="transactionDAO.mongo.perf"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="systemStatusController" class="common.rest.SystemStatusController"
           p:systemStatusService-ref="systemStatusService"/>

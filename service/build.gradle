@@ -14,9 +14,9 @@ deploy {
     basePort = 12000
     useSSL = true
     keyAlias = 'oauth'
-    keystoreFile = 'conf/FraudService/appconfig/oauth.jks'
+    keystoreFile = 'conf/fraud/appconfig/oauth.jks'
     keystorePass = '5ecret0AUTHPa55word'
-    truststoreFile = 'conf/FraudService/appconfig/oauth.jks'
+    truststoreFile = 'conf/fraud/appconfig/oauth.jks'
     truststorePass = '5ecret0AUTHPa55word'
     configIncludes = ['**/*.drl']
 }

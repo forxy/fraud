@@ -14,7 +14,7 @@
         </property>
     </bean>
 
-    <bean id="configuration" class="common.support.Configuration">
+    <bean id="configuration" class="common.utils.support.Configuration">
         <constructor-arg>
             <map>
                 <entry key="#{T(common.web.JSONValidationProvider$Configs).IsObjectValidationEnabled}"

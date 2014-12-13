@@ -9,7 +9,7 @@
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-    <bean id="service.configuration" class="common.support.Configuration">
+    <bean id="service.configuration" class="common.utils.support.Configuration">
         <constructor-arg>
             <map>
                 <entry key="#{T(common.web.JSONValidationProvider$Configs).IsObjectValidationEnabled}"
@@ -40,7 +40,6 @@
             <ref bean="velocityConfigController"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-            <!--<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>-->
             <bean class="common.web.JSONValidationProvider">
                 <property name="configuration" ref="service.configuration"/>
                 <property name="validator" ref="payload.validator"/>

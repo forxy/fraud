@@ -2,7 +2,7 @@ package fraud.service.derog
 
 import common.exceptions.ServiceException
 import fraud.db.dao.IDerogDAO
-import fraud.exceptions.FraudServiceEvent
+import fraud.exceptions.FraudEvent
 import fraud.api.v1.derog.BlackListItem
 import fraud.api.v1.derog.ListPartitionKey
 
@@ -47,7 +47,7 @@ class DerogService implements IDerogService {
             existingItem.setUpdatedBy(item.getUpdatedBy())
             blackListDAO.save(existingItem)
         } else {
-            throw new ServiceException(FraudServiceEvent.IsInBlackListAlready,
+            throw new ServiceException(FraudEvent.IsInBlackListAlready,
                     item.getKey().getType(), item.getKey().getValue())
         }
     }
@@ -58,7 +58,7 @@ class DerogService implements IDerogService {
             blackListDAO.save(item)
             item.setUpdateDate(new Date())
         } else {
-            throw new ServiceException(FraudServiceEvent.BlackListItemIsNotExist,
+            throw new ServiceException(FraudEvent.BlackListItemIsNotExist,
                     item.getKey().getType(), item.getKey().getValue())
         }
     }

@@ -5,7 +5,7 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="configuration.performance" class="common.support.Configuration">
+    <bean id="configuration.performance" class="common.utils.support.Configuration">
         <property name="settings">
             <map key-type="java.lang.Object" value-type="java.lang.String">
                 <entry key="#{T(common.logging.LoggingServletFilter$Configs).IsHttpInfoLoggingEnabled}"
@@ -20,7 +20,7 @@
 
     <!-- ================= SERVICE ================================================================================= -->
 
-    <bean id="configuration.performance.endpoint" class="common.support.Configuration"
+    <bean id="configuration.performance.endpoint" class="common.utils.support.Configuration"
           parent="configuration.performance">
         <property name="settings">
             <map key-type="java.lang.Object" value-type="java.lang.String" merge="true">
@@ -82,7 +82,7 @@
 
     <!-- ================= DAO ===================================================================================== -->
 
-    <bean id="configuration.performance.dao" class="common.support.Configuration"
+    <bean id="configuration.performance.dao" class="common.utils.support.Configuration"
           parent="configuration.performance"/>
 
     <bean id="databaseExceptionHandler"
@@ -155,7 +155,7 @@
 
     <!-- ================= IMPLEMENTATION ========================================================================== -->
 
-    <bean id="configuration.performance.impl" class="common.support.Configuration"
+    <bean id="configuration.performance.impl" class="common.utils.support.Configuration"
           parent="configuration.performance"/>
 
     <bean id="serviceExceptionHandler"
