@@ -51,5 +51,5 @@ dependencies {
 
     // ===================== TEST ========================================
     testCompile "fraud:common.spring-support:$rev_fraud_common"
-    testCompile "junit:junit:${rev_junit}"
+    testCompile "junit:junit:$rev_junit"
 }

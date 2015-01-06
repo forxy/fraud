@@ -33,16 +33,16 @@ enum FraudEvent implements EventLogBase {
 
     private static int BASE_EVENT_LOG_ID = 20000
 
-    private FraudEvent(int eventId, int responseId, EventLogBase.EventType eventType, String formatString) {
-        this(eventId, responseId, EventLogBase.Level.ERROR, eventType, formatString)
+    private FraudEvent(int eventId, int responseId, EventLogBase.EventType eventType, String messageFormat) {
+        this(eventId, responseId, EventLogBase.Level.ERROR, eventType, messageFormat)
     }
 
     private FraudEvent(int eventID, int httpCode, EventLogBase.Level logLevel, EventLogBase.EventType eventType,
-                       String formatString) {
+                       String messageFormat) {
         this.eventID = BASE_EVENT_LOG_ID + eventID
         this.httpCode = httpCode
         this.logLevel = logLevel
-        this.formatString = formatString
+        this.messageFormat = messageFormat
         this.eventType = eventType
     }
 }

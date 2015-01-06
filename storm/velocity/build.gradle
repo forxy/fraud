@@ -30,7 +30,6 @@ dependencies {
 
     // --------------------- COMMON --------------------------------------
     compile "org.quartz-scheduler:quartz:$rev_quartz"
-    compile "joda-time:joda-time:$rev_joda_time"
 
     // --------------------- MONGO ---------------------------------------
     compile "org.mongodb:mongo-java-driver:$rev_mongo"

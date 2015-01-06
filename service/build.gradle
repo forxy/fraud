@@ -43,7 +43,6 @@ dependencies {
     compile "commons-collections:commons-collections:$rev_common_collections"
     compile "ch.qos.logback:logback-classic:$rev_logback"
     compile "org.quartz-scheduler:quartz:$rev_quartz"
-    compile "joda-time:joda-time:$rev_joda_time"
 
     // --------------------- GROOVY --------------------------------------
     compile "org.codehaus.gpars:gpars:$rev_gpars"
