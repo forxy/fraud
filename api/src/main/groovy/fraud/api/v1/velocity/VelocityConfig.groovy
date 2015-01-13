@@ -14,12 +14,12 @@ import org.springframework.data.mongodb.core.mapping.Document
 class VelocityConfig implements Serializable {
     @Id
     String id
-    Set<String> primaryMetrics;
-    Long period;
-    Long expiresIn;
-    Set<AggregationConfig> aggregationConfigs;
-    Date createDate;
-    String createdBy;
-    Date updateDate;
-    String updatedBy;
+    Set<String> primaryMetrics
+    Long period
+    Long expiresIn
+    Set<AggregationConfig> aggregationConfigs
+    Date createDate
+    String createdBy
+    Date updateDate
+    String updatedBy
 }

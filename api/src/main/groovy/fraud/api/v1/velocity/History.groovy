@@ -15,14 +15,14 @@ import javax.persistence.Table
 @EqualsAndHashCode
 class History implements Serializable {
     @EmbeddedId
-    HistoryCompositeKey key;
+    HistoryCompositeKey key
 
     @ToString
     @EqualsAndHashCode
     static class HistoryCompositeKey implements Serializable {
         @EmbeddedId
-        PartitionKey id;
+        PartitionKey id
         @Column(name="transaction_id", columnDefinition="timeuuid")
-        UUID transactionID;
+        UUID transactionID
     }
 }

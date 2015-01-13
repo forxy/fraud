@@ -15,18 +15,18 @@ import javax.persistence.Table
 @EqualsAndHashCode
 class Metric implements Serializable {
     @EmbeddedId
-    MetricCompositeKey key;
+    MetricCompositeKey key
     @Column(name = "aggregated_value")
-    Double aggregatedValue;
+    Double aggregatedValue
 
     @ToString
     @EqualsAndHashCode
     static class MetricCompositeKey implements Serializable {
         @EmbeddedId
-        PartitionKey id;
+        PartitionKey id
         @Column(name = "secondary_metric")
-        String secondaryMetric;
+        String secondaryMetric
         @Column(name = "aggregation_type")
-        Aggregation aggregationType;
+        Aggregation aggregationType
     }
 }

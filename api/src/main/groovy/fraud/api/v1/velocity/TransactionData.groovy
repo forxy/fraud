@@ -15,16 +15,16 @@ import javax.persistence.Table
 @EqualsAndHashCode
 class TransactionData implements Serializable {
     @EmbeddedId
-    TransactionCompositeKey key;
+    TransactionCompositeKey key
     @Column(name = "data")
-    List<String> data;
+    List<String> data
 
     @ToString
     @EqualsAndHashCode
     static class TransactionCompositeKey implements Serializable {
         @Column(name = "transaction_id", columnDefinition = "timeuuid")
-        UUID transactionID;
+        UUID transactionID
         @Column(name = "data_type")
-        String dataType;
+        String dataType
     }
 }

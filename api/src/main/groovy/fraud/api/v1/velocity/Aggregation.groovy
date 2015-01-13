@@ -5,76 +5,76 @@ package fraud.api.v1.velocity
 enum Aggregation implements Serializable {
     Max{
         Double apply(List<String> data) {
-            Double max = Double.MIN_VALUE;
+            Double max = Double.MIN_VALUE
             data.each {
                 try {
-                    double value = Double.parseDouble(it);
+                    double value = Double.parseDouble(it)
                     if (value > max) {
-                        max = value;
+                        max = value
                     }
                 } catch (NumberFormatException ignored) {
-                    return null;
+                    return null
                 }
             }
-            return max;
+            return max
         }
     },
     Min{
         Double apply(List<String> data) {
-            Double min = Double.MAX_VALUE;
+            Double min = Double.MAX_VALUE
             data.each {
                 try {
-                    double value = Double.parseDouble(it);
+                    double value = Double.parseDouble(it)
                     if (value < min) {
-                        min = value;
+                        min = value
                     }
                 } catch (NumberFormatException ignored) {
-                    return null;
+                    return null
                 }
             }
-            return min;
+            return min
         }
     },
     Avg{
         Double apply(List<String> data) {
-            Double sum = 0.0;
+            Double sum = 0.0
             if (data.size() > 0) {
                 data.each {
                     try {
-                        sum += Double.parseDouble(it);
+                        sum += Double.parseDouble(it)
                     } catch (NumberFormatException ignored) {
-                        return null;
+                        return null
                     }
                 }
-                return sum / data.size();
+                return sum / data.size()
             } else {
-                return 0.0;
+                return 0.0
             }
         }
     },
     Sum{
         Double apply(List<String> data) {
-            Double sum = 0.0;
+            Double sum = 0.0
             data.each {
                 try {
-                    sum += Double.parseDouble(it);
+                    sum += Double.parseDouble(it)
                 } catch (NumberFormatException ignored) {
-                    return null;
+                    return null
                 }
             }
-            return sum;
+            return sum
         }
     },
     Count{
         Double apply(List<String> data) {
-            return (double) data.size();
+            return (double) data.size()
         }
     },
     UniqueCount{
         Double apply(List<String> data) {
-            return (double) data.toSet().size();
+            return (double) data.toSet().size()
         }
-    };
+    }
 
-    abstract Double apply(List<String> data);
+    abstract Double apply(List<String> data)
 }

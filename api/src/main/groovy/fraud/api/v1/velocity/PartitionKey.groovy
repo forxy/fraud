@@ -12,7 +12,7 @@ import javax.persistence.Column
 @EqualsAndHashCode
 class PartitionKey implements Serializable {
     @Column(name = "metric_type")
-    String metricType;
+    String metricType
     @Column(name = "metric_value")
-    String metricValue;
+    String metricValue
 }
