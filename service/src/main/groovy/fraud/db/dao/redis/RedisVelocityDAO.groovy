@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
  * Created by Tiger on 24.09.14.
  */
 class RedisVelocityDAO implements IRedisVelocityDAO {
-    StringRedisTemplate redis;
+    StringRedisTemplate redis
 
     @Transactional
     @Override
