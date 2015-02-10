@@ -7,12 +7,13 @@ import fraud.api.v1.velocity.VelocityConfig
 /**
  * Shared storage for operational data
  */
-class DBCache implements InitializingBean {
+class DBCache implements IDBCache, InitializingBean {
 
     IVelocityConfigDAO velocityConfigDAO
 
     List<VelocityConfig> configs
 
+    @Override
     void invalidate() {
         configs = velocityConfigDAO?.findAll()?.asList()
     }

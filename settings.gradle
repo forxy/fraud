@@ -3,7 +3,7 @@ rootProject.name = project_name
 def projects = [
         ':api': [name: "fraud.api", path: 'api'],
         ':client': [name: "fraud.client", path: 'client'],
-        //':storm:velocity': [name: "fraud.storm.velocity", path: 'storm/velocity'],
+        ':storm:velocity': [name: "fraud.storm.velocity", path: 'storm/velocity'],
         ':service': [name: "fraud.service", path: 'service']
 ]
 

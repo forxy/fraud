@@ -4,7 +4,7 @@ import com.datastax.driver.core.utils.UUIDs
 import fraud.api.v1.velocity.*
 import fraud.db.dao.cassandra.ICassandraVelocityDAO
 import fraud.db.dao.redis.IRedisVelocityDAO
-import fraud.util.DBCache
+import fraud.util.IDBCache
 import groovyx.gpars.GParsPool
 import jsr166y.ForkJoinPool
 import org.joda.time.DateTime
@@ -25,7 +25,7 @@ class VelocityService implements IVelocityService {
 
     ICassandraVelocityDAO cassandraDAO
     IRedisVelocityDAO redisDAO;
-    DBCache dbCache
+    IDBCache dbCache
     private final static java.util.concurrent.ForkJoinPool FJP = new java.util.concurrent.ForkJoinPool(2)
 
     @Override
@@ -293,6 +293,6 @@ class VelocityService implements IVelocityService {
         }
         if (startID) tranIDs.removeAll { Long.valueOf(it) <= Long.valueOf(startID) }
         if (endID) tranIDs.removeAll { Long.valueOf(it) >= Long.valueOf(endID) }
-        return redisDAO.getHistoricalData(tranIDs)?.sort {it.id}
+        return redisDAO.getHistoricalData(tranIDs)?.sort { it.id }
     }
 }

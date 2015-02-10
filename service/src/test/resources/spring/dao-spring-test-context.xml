@@ -13,7 +13,7 @@
     <bean id="currencyExchangeDAO.mongo.perf"
               class="org.easymock.EasyMock"
               factory-method="createNiceMock"
-              c:toMock="fraud.db.dao.mongo.CurrencyExchangeDAO"/>
+              c:toMock="fraud.db.dao.ICurrencyExchangeDAO"/>
 
     <bean id="velocityConfigDAO.impl.mongo"
           class="org.easymock.EasyMock"
@@ -43,7 +43,7 @@
     <bean id="dbCache"
           class="org.easymock.EasyMock"
           factory-method="createNiceMock"
-          c:toMock="fraud.util.DBCache"/>
+          c:toMock="fraud.util.IDBCache"/>
 
 
 </beans>
