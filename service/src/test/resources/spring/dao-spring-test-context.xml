@@ -11,9 +11,9 @@
           c:toMock="fraud.db.dao.ITransactionDAO"/>
 
     <bean id="currencyExchangeDAO.mongo.perf"
-              class="org.easymock.EasyMock"
-              factory-method="createNiceMock"
-              c:toMock="fraud.db.dao.ICurrencyExchangeDAO"/>
+          class="org.easymock.EasyMock"
+          factory-method="createNiceMock"
+          c:toMock="fraud.db.dao.ICurrencyExchangeDAO"/>
 
     <bean id="velocityConfigDAO.impl.mongo"
           class="org.easymock.EasyMock"
