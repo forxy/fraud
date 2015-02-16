@@ -82,6 +82,8 @@ dependencies {
     compile "org.json:json:$rev_org_json"
 
     // ===================== TEST ========================================
+    testCompile "org.spockframework:spock-core:$rev_spok"
+    testCompile "org.spockframework:spock-spring:$rev_spok"
     testCompile "org.springframework:spring-test:$rev_spring"
     testCompile "junit:junit:$rev_junit"
     testCompile "org.easymock:easymock:$rev_easymock"

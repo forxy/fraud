@@ -27,7 +27,7 @@
         <property name="locations">
             <list>
                 <value>file:${config.dir}/fraud/appconfig/base/fraud.properties</value>
-                <value>file:${config.dir}/fraud/appconfig/env/${env}/fraud.properties</value>
+                <value>file:${config.dir}/fraud/appconfig/env/${spring.profiles.active}/fraud.properties</value>
             </list>
         </property>
     </bean>
