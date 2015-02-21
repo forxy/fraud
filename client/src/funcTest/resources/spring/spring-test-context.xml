@@ -8,7 +8,7 @@
           p:ignoreUnresolvablePlaceholders="true">
         <property name="locations">
             <list>
-                <value>classpath:fraud.client.properties</value>
+                <value>classpath:spring/fraud.client.properties</value>
             </list>
         </property>
     </bean>
